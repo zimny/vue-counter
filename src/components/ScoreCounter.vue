@@ -17,18 +17,20 @@
 <style>
 </style>
 <script>
-    export default{
+    import store from '../store'
+
+    export default {
         data() {
             return {
-                current: this.initialValue,
-                initial: this.initialValue,
-                format: this.initialFormat
+                format: this.initialFormat,
+                initial: this.initial
             }
         },
         props: {
             initialFormat: Number,
-            initialValue: Number,
-            index: Number
+            index: Number,
+            current: Number,
+            id: Number
         },
         computed: {
             dispValue: function () {
@@ -37,27 +39,17 @@
         },
         created() {
             this.formatValue = function (current, format) {
-                return (Array(Math.max(this.format - String(this.current).length + 1, 0)).join(0) + this.current);
+                return (new Array(Math.max(format - String(current).length + 1, 0)).join(0) + current);
             }
         },
         methods: {
             increment(e){
                 e.preventDefault();
-                if (this.current === (Math.pow(10, this.format)) - 1) {
-                    this.current = 0;
-                }
-                else {
-                    this.current++;
-                }
+                store.dispatch('increment', this.id)
             },
             decrement(e){
                 e.preventDefault();
-                if (this.current === 0) {
-                    this.current = (Math.pow(10, this.format)) - 1;
-                }
-                else {
-                    this.current--;
-                }
+                store.dispatch('decrement', this.id)
             },
             get(e){
                 e.preventDefault();
@@ -65,11 +57,11 @@
             },
             set(e){
                 e.preventDefault();
-                this.current = this.initial;
+                store.dispatch('set', {id: this.id, initial: this.initial})
             },
             reset(e){
                 e.preventDefault();
-                this.current = this.initial;
+                this.$store.commit('reset', this.id);
             }
         }
     }
